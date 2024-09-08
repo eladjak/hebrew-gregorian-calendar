@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "EY Calendar",
+  "name": "EY Calendar - Your Personal Event Planner",
   "icons": [
     {
       "src": "favicon.ico",
