@@ -20,7 +20,7 @@ This project is a React-based calendar application that supports both Hebrew and
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/hebrew-gregorian-calendar.git
+   git clone https://github.com/eladjak/hebrew-gregorian-calendar.git
    ```
 
 2. Navigate to the project directory:
