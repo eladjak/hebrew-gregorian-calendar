@@ -7,6 +7,7 @@ import CalendarToolbar from './CalendarToolbar';
 import CustomEventModal from './CustomEventModal';
 import { StyledCalendarWrapper } from './StyledComponents';
 import { useEvents } from '../hooks/useEvents';
+import PropTypes from 'prop-types';
 
 const CalendarContainer = ({ onLanguageChange }) => {
   const [isHebrew, setIsHebrew] = useState(false);
@@ -16,7 +17,7 @@ const CalendarContainer = ({ onLanguageChange }) => {
   const { t } = useTranslation();
   const { events, isLoading, fetchEvents, addEvent, updateEvent, deleteEvent } = useEvents((message, type) => {
     // Implement your own notification system here
-    console.log(message, type);
+    console.warn(message, type);
   }, t);
 
   useEffect(() => {
@@ -104,6 +105,10 @@ const CalendarContainer = ({ onLanguageChange }) => {
       />
     </StyledCalendarWrapper>
   );
+};
+
+CalendarContainer.propTypes = {
+  onLanguageChange: PropTypes.func.isRequired
 };
 
 export default React.memo(CalendarContainer);

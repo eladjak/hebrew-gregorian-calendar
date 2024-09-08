@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, IconButton, Tooltip } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSync, faPlus, faLanguage, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import PropTypes from 'prop-types';
 
 const CalendarToolbar = ({
   onLanguageChange,
@@ -38,6 +39,14 @@ const CalendarToolbar = ({
       </Box>
     </Box>
   );
+};
+
+CalendarToolbar.propTypes = {
+  onLanguageChange: PropTypes.func.isRequired,
+  onRefresh: PropTypes.func.isRequired,
+  isHebrew: PropTypes.bool.isRequired,
+  onCalendarTypeChange: PropTypes.func.isRequired,
+  onAddEvent: PropTypes.func.isRequired
 };
 
 export default React.memo(CalendarToolbar);

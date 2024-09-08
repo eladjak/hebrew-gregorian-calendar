@@ -11,9 +11,24 @@ module.exports = {
     env: {
       browser: true,
       es2021: true,
-      node: true
+      node: true,
+      jest: true
+    },
+    settings: {
+      react: {
+        version: 'detect'
+      }
     },
     rules: {
-      // כאן תוכל להוסיף כללים מותאמים אישית
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'error',
+      'no-unused-vars': ['error', { 
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+        caughtErrors: 'none',
+        args: 'after-used'
+      }],
+      'no-console': ['warn', { allow: ['warn', 'error'] }]
     }
   };

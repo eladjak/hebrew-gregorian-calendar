@@ -20,7 +20,7 @@ const GregorianCalendar = ({ events, onEventClick, onDateClick, view, onViewChan
   const calendarRef = useRef(null);
 
   useEffect(() => {
-    console.log('View changed to:', view);
+    console.warn('View changed to:', view);
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
       calendarApi.changeView(view);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Grid, Typography, IconButton } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { HDate, HebrewCalendar as HebCal, months } from '@hebcal/core';
+import PropTypes from 'prop-types';
 
 const HebrewCalendar = ({ events, onEventClick, onDateClick }) => {
   const [currentDate, setCurrentDate] = useState(new HDate());
@@ -71,6 +72,12 @@ const HebrewCalendar = ({ events, onEventClick, onDateClick }) => {
       </Grid>
     </div>
   );
+};
+
+HebrewCalendar.propTypes = {
+  events: PropTypes.array.isRequired,
+  onEventClick: PropTypes.func.isRequired,
+  onDateClick: PropTypes.func.isRequired
 };
 
 export default HebrewCalendar;

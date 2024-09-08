@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Grid, Paper, Typography, Button } from '@mui/material';
 import { HDate } from '@hebcal/core';
+import PropTypes from 'prop-types';
 
 function CustomCalendar({ events, onEventClick, onDateClick }) {
   const [currentDate] = useState(new Date());
@@ -47,5 +48,11 @@ function CustomCalendar({ events, onEventClick, onDateClick }) {
     </Paper>
   );
 }
+
+CustomCalendar.propTypes = {
+  events: PropTypes.array.isRequired,
+  onEventClick: PropTypes.func.isRequired,
+  onDateClick: PropTypes.func.isRequired
+};
 
 export default CustomCalendar;

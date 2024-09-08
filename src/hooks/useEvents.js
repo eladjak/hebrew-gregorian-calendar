@@ -8,11 +8,11 @@ export const useEvents = (showMessage, t) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchEvents = useCallback(async () => {
-    console.log('Fetching events...');
+    console.warn('Fetching events...');
     setIsLoading(true);
     try {
       const response = await axios.get(`${API_URL}/events`);
-      console.log('Fetched events:', response.data);
+      console.warn('Fetched events:', response.data);
       setEvents(response.data);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -23,10 +23,10 @@ export const useEvents = (showMessage, t) => {
   }, [showMessage, t]);
 
   const addEvent = useCallback(async (newEvent) => {
-    console.log('Adding event:', newEvent);
+    console.warn('Adding event:', newEvent);
     try {
       const response = await axios.post(`${API_URL}/events`, newEvent);
-      console.log('Event added:', response.data);
+      console.warn('Event added:', response.data);
       setEvents(prevEvents => [...prevEvents, response.data]);
       showMessage(t('eventAdded'), 'success');
     } catch (error) {
@@ -36,10 +36,8 @@ export const useEvents = (showMessage, t) => {
   }, [showMessage, t]);
 
   const updateEvent = useCallback(async (updatedEvent) => {
-    console.log('Updating event:', updatedEvent);
     try {
       const response = await axios.put(`${API_URL}/events/${updatedEvent._id}`, updatedEvent);
-      console.log('Event updated:', response.data);
       setEvents(prevEvents => prevEvents.map(event => event._id === updatedEvent._id ? response.data : event));
       showMessage(t('eventUpdated'), 'success');
     } catch (error) {

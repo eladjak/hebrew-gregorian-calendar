@@ -32,25 +32,7 @@ export const CalendarHeader = styled(Box)(({ theme }) => ({
   },
 }));
 
-export const DayCell = styled(Paper)(({ theme, isToday }) => ({
-  padding: theme.spacing(1),
-  height: '100%',
-  minHeight: '80px',
-  display: 'flex',
-  flexDirection: 'column',
-  cursor: 'pointer',
-  transition: 'all 0.3s ease',
-  background: isToday ? theme.palette.primary.light : theme.palette.background.paper,
-  '&:hover': {
-    transform: 'scale(1.05)',
-    boxShadow: theme.shadows[4],
-  },
-  [theme.breakpoints.down('sm')]: {
-    minHeight: '60px',
-  },
-}));
-
-export const ToolbarWrapper = styled(Box)(({ theme }) => ({
+export const CalendarControls = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
@@ -81,14 +63,10 @@ export const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => 
   },
 }));
 
-export const AnimatedButton = styled(Button)(({ theme }) => ({
-  margin: theme.spacing(0.5),
+export const AnimatedButton = styled(Button)(() => ({
   transition: 'all 0.3s ease-in-out',
   '&:hover': {
     transform: 'scale(1.05)',
-    boxShadow: theme.shadows[4],
-  },
-  [theme.breakpoints.down('sm')]: {
-    margin: theme.spacing(0.5, 0),
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
   },
 }));

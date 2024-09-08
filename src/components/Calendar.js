@@ -21,6 +21,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLanguage, faSync, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { HDate } from '@hebcal/core';
 import CustomCalendar from './CustomCalendar';
+import PropTypes from 'prop-types';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5050';
 
@@ -91,7 +92,7 @@ const Controls = styled('div')(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
-const AnimatedIconButton = styled(IconButton)(({ theme }) => ({
+const AnimatedIconButton = styled(IconButton)(() => ({
   transition: 'transform 0.3s',
   '&:hover': {
     transform: 'scale(1.1)',
@@ -156,9 +157,9 @@ const Calendar = ({ onLanguageChange }) => {
 
   const fetchEvents = useCallback(async () => {
     try {
-      console.log('Fetching events from:', API_URL);
+      console.warn('Fetching events from:', API_URL);
       const response = await axios.get(`${API_URL}/events`);
-      console.log('Fetched events:', response.data);
+      console.warn('Fetched events:', response.data);
       workerRef.current.postMessage({ type: 'PROCESS_EVENTS', events: response.data });
     } catch (error) {
       console.error('Error loading events:', error);
@@ -265,7 +266,7 @@ const Calendar = ({ onLanguageChange }) => {
 
   const addEvent = async (newEvent) => {
     try {
-      console.log('Adding new event:', newEvent);
+      console.warn('Adding new event:', newEvent);
       await axios.post(`${API_URL}/events`, newEvent);
       fetchEvents();
       showFeedback(t('eventAddedSuccessfully'));
@@ -277,9 +278,9 @@ const Calendar = ({ onLanguageChange }) => {
 
   const updateEvent = async (event) => {
     try {
-      console.log('Updating event:', event);
+      console.warn('Updating event:', event);
       const response = await axios.put(`${API_URL}/events/${event._id}`, event);
-      console.log('Update response:', response.data);
+      console.warn('Update response:', response.data);
       setEvents(prevEvents => prevEvents.map(e => e._id === event._id ? response.data : e));
       showFeedback(t('eventUpdated'), 'success');
     } catch (error) {
@@ -290,7 +291,7 @@ const Calendar = ({ onLanguageChange }) => {
 
   const deleteEvent = async (eventId) => {
     try {
-      console.log('Deleting event with id:', eventId);
+      console.warn('Deleting event with id:', eventId);
       await axios.delete(`${API_URL}/events/${eventId}`);
       setEvents(prevEvents => prevEvents.filter(event => event._id !== eventId));
       showFeedback(t('eventDeleted'), 'success');
@@ -301,7 +302,7 @@ const Calendar = ({ onLanguageChange }) => {
   };
 
   const handleEventClick = (clickInfo) => {
-    console.log('Event clicked:', clickInfo.event);
+    console.warn('Event clicked:', clickInfo.event);
     Swal.fire({
       title: t('eventOptions'),
       icon: 'question',
@@ -534,6 +535,10 @@ const Calendar = ({ onLanguageChange }) => {
       </StyledPaper>
     </Container>
   );
+};
+
+Calendar.propTypes = {
+  onLanguageChange: PropTypes.func.isRequired,
 };
 
 export default Calendar;

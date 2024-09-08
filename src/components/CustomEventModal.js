@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
+import PropTypes from 'prop-types';
 
 const CustomEventModal = ({ open, onClose, event, onSave, onDelete }) => {
   const [title, setTitle] = useState('');
@@ -87,6 +88,14 @@ const CustomEventModal = ({ open, onClose, event, onSave, onDelete }) => {
       </DialogActions>
     </Dialog>
   );
+};
+
+CustomEventModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  event: PropTypes.object,
+  onSave: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired
 };
 
 export default CustomEventModal;
