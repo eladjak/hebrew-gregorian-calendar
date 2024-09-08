@@ -52,6 +52,7 @@ const CalendarContainer = ({ onLanguageChange }) => {
     } else {
       await addEvent(eventData);
     }
+    setModalOpen(false);
     fetchEvents();
   }, [updateEvent, addEvent, fetchEvents]);
 

@@ -7,6 +7,7 @@ import listPlugin from '@fullcalendar/list';
 import { Paper, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { HDate, gematriya } from '@hebcal/core';
+import PropTypes from 'prop-types';
 
 const CalendarWrapper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -30,6 +31,14 @@ const GregorianCalendar = ({ events, onEventClick, onDateClick, view, onViewChan
     const hDate = new HDate(date);
     return `${gematriya(hDate.getDate())} ${hDate.getMonthName('h')}`;
   }, []);
+
+  GregorianCalendar.propTypes = {
+    events: PropTypes.array.isRequired,
+    onEventClick: PropTypes.func.isRequired,
+    onDateClick: PropTypes.func.isRequired,
+    view: PropTypes.string.isRequired,
+    onViewChange: PropTypes.func.isRequired,
+  };
 
   return (
     <CalendarWrapper>

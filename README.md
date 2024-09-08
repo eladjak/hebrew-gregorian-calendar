@@ -60,3 +60,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [FullCalendar](https://fullcalendar.io/) for the calendar component
 - [Hebcal](https://www.hebcal.com/) for Hebrew date calculations
 - [Material-UI](https://material-ui.com/) for UI components
+
+## פיתוח
+
+### הפעלת בדיקות
+
+כדי להפעיל את הבדיקות, השתמש בפקודה הבאה:
