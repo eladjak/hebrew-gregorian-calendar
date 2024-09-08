@@ -1,15 +1,13 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import axios from 'axios';
-import { debounce } from 'lodash';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5050';
 
-export const useEvents = (showAlert, t) => {
+export const useEvents = (showMessage, t) => {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const fetchEventsRef = useRef(null);
 
-  fetchEventsRef.current = async () => {
+  const fetchEvents = useCallback(async () => {
     console.log('Fetching events...');
     setIsLoading(true);
     try {
@@ -18,26 +16,11 @@ export const useEvents = (showAlert, t) => {
       setEvents(response.data);
     } catch (error) {
       console.error('Error fetching events:', error);
-      showAlert(t('errorFetchingEvents'), 'error');
+      showMessage(t('errorFetchingEvents'), 'error');
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const debouncedFetchEvents = useCallback(() => {
-    const fetchEvents = () => {
-      if (fetchEventsRef.current) {
-        fetchEventsRef.current();
-      }
-    };
-    return debounce(fetchEvents, 300);
-  }, []);
-
-  useEffect(() => {
-    const fetchEventsDebounced = debouncedFetchEvents();
-    fetchEventsDebounced();
-    return () => fetchEventsDebounced.cancel();
-  }, [debouncedFetchEvents]);
+  }, [showMessage, t]);
 
   const addEvent = useCallback(async (newEvent) => {
     console.log('Adding event:', newEvent);
@@ -45,12 +28,12 @@ export const useEvents = (showAlert, t) => {
       const response = await axios.post(`${API_URL}/events`, newEvent);
       console.log('Event added:', response.data);
       setEvents(prevEvents => [...prevEvents, response.data]);
-      showAlert('success', t('success'), t('eventAdded'));
+      showMessage(t('eventAdded'), 'success');
     } catch (error) {
       console.error('Error adding event:', error);
-      showAlert('error', t('error'), t('failedToAddEvent'));
+      showMessage(t('failedToAddEvent'), 'error');
     }
-  }, [showAlert, t]);
+  }, [showMessage, t]);
 
   const updateEvent = useCallback(async (updatedEvent) => {
     console.log('Updating event:', updatedEvent);
@@ -58,30 +41,28 @@ export const useEvents = (showAlert, t) => {
       const response = await axios.put(`${API_URL}/events/${updatedEvent._id}`, updatedEvent);
       console.log('Event updated:', response.data);
       setEvents(prevEvents => prevEvents.map(event => event._id === updatedEvent._id ? response.data : event));
-      showAlert('success', t('success'), t('eventUpdated'));
+      showMessage(t('eventUpdated'), 'success');
     } catch (error) {
       console.error('Error updating event:', error);
-      showAlert('error', t('error'), t('failedToUpdateEvent'));
+      showMessage(t('failedToUpdateEvent'), 'error');
     }
-  }, [showAlert, t]);
+  }, [showMessage, t]);
 
   const deleteEvent = useCallback(async (eventId) => {
-    console.log('Deleting event:', eventId);
     if (!eventId) {
       console.error('Attempt to delete event without ID');
-      showAlert(t('error'), t('failedToDeleteEvent'));
+      showMessage(t('failedToDeleteEvent'), 'error');
       return;
     }
     try {
       await axios.delete(`${API_URL}/events/${eventId}`);
-      console.log('Event deleted:', eventId);
       setEvents(prevEvents => prevEvents.filter(event => event._id !== eventId));
-      showAlert(t('success'), t('eventDeleted'));
+      showMessage(t('eventDeleted'), 'success');
     } catch (error) {
       console.error('Error deleting event:', error);
-      showAlert(t('error'), t('failedToDeleteEvent'));
+      showMessage(t('failedToDeleteEvent'), 'error');
     }
-  }, [showAlert, t]);
+  }, [showMessage, t]);
 
-  return { events, isLoading, fetchEvents: debouncedFetchEvents(), addEvent, updateEvent, deleteEvent };
+  return { events, isLoading, fetchEvents, addEvent, updateEvent, deleteEvent };
 };

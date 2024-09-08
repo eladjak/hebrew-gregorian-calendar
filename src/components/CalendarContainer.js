@@ -1,64 +1,72 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Fade, CircularProgress, Button } from '@mui/material';
-import Swal from 'sweetalert2';
+import { Box, Fade, CircularProgress } from '@mui/material';
 import GregorianCalendar from './GregorianCalendar';
 import HebrewCalendar from './HebrewCalendar';
 import CalendarToolbar from './CalendarToolbar';
+import CustomEventModal from './CustomEventModal';
 import { StyledCalendarWrapper } from './StyledComponents';
-import { useSweetAlert } from '../hooks/useSweetAlert';
 import { useEvents } from '../hooks/useEvents';
 
 const CalendarContainer = ({ onLanguageChange }) => {
   const [isHebrew, setIsHebrew] = useState(false);
   const [view, setView] = useState('dayGridMonth');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const { t } = useTranslation();
-  const { showEventForm } = useSweetAlert();
   const { events, isLoading, fetchEvents, addEvent, updateEvent, deleteEvent } = useEvents((message, type) => {
-    Swal.fire({
-      title: type === 'error' ? t('error') : t('success'),
-      text: message,
-      icon: type,
-    });
+    // Implement your own notification system here
+    console.log(message, type);
   }, t);
 
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
+
   const handleEventClick = useCallback((clickInfo) => {
-    showEventForm(clickInfo.event.toPlainObject(), (updatedEvent) => {
-      if (updatedEvent._id) {
-        updateEvent(updatedEvent);
-      } else {
-        deleteEvent(clickInfo.event.id);
-      }
-    }, () => deleteEvent(clickInfo.event.id));
-  }, [showEventForm, updateEvent, deleteEvent]);
-
-  const handleDateClick = useCallback((dateClickInfo) => {
-    showEventForm({ start: dateClickInfo.date }, (newEvent) => {
-      addEvent(newEvent);
-    });
-  }, [showEventForm, addEvent]);
-
-  const handleViewChange = useCallback((newView) => {
-    console.log('View changed to:', newView);
-    setView(newView);
+    setSelectedEvent(clickInfo.event.toPlainObject());
+    setModalOpen(true);
   }, []);
 
-  const handleAddEvent = useCallback(() => {
-    showEventForm({}, (newEvent) => {
-      addEvent(newEvent);
-    });
-  }, [showEventForm, addEvent]);
+  const handleDateClick = useCallback((dateClickInfo) => {
+    setSelectedEvent({ start: dateClickInfo.date });
+    setModalOpen(true);
+  }, []);
+
+  const handleViewChange = useCallback((newView) => {
+    setView(newView);
+  }, []);
 
   const handleCalendarTypeChange = useCallback(() => {
     setIsHebrew(prev => !prev);
   }, []);
+
+  const handleAddEvent = useCallback(() => {
+    setSelectedEvent(null);
+    setModalOpen(true);
+  }, []);
+
+  const handleSaveEvent = useCallback(async (eventData) => {
+    if (eventData._id) {
+      await updateEvent(eventData);
+    } else {
+      await addEvent(eventData);
+    }
+    fetchEvents();
+  }, [updateEvent, addEvent, fetchEvents]);
+
+  const handleDeleteEvent = useCallback(async (eventId) => {
+    await deleteEvent(eventId);
+    fetchEvents();
+  }, [deleteEvent, fetchEvents]);
 
   const calendarProps = useMemo(() => ({
     events,
     onEventClick: handleEventClick,
     onDateClick: handleDateClick,
     view,
-  }), [events, handleEventClick, handleDateClick, view]);
+    onViewChange: handleViewChange,
+  }), [events, handleEventClick, handleDateClick, view, handleViewChange]);
 
   return (
     <StyledCalendarWrapper>
@@ -71,9 +79,6 @@ const CalendarContainer = ({ onLanguageChange }) => {
         view={view}
         onViewChange={handleViewChange}
       />
-      <Button onClick={handleCalendarTypeChange}>
-        {isHebrew ? 'Switch to Gregorian' : 'עבור ללוח עברי'}
-      </Button>
       {isLoading ? (
         <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
           <CircularProgress />
@@ -89,6 +94,13 @@ const CalendarContainer = ({ onLanguageChange }) => {
           </Box>
         </Fade>
       )}
+      <CustomEventModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        event={selectedEvent}
+        onSave={handleSaveEvent}
+        onDelete={handleDeleteEvent}
+      />
     </StyledCalendarWrapper>
   );
 };

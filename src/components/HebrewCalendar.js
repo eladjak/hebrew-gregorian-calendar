@@ -1,77 +1,76 @@
-import React, { useEffect, useCallback, useRef } from 'react';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import listPlugin from '@fullcalendar/list';
-import { Paper, Typography } from '@mui/material';
-import { styled } from '@mui/system';
-import { HDate, gematriya } from '@hebcal/core';
+import React, { useState, useEffect } from 'react';
+import { Grid, Typography, IconButton } from '@mui/material';
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { HDate, HebrewCalendar as HebCal, months } from '@hebcal/core';
 
-const CalendarWrapper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(2),
-  borderRadius: theme.shape.borderRadius,
-  boxShadow: '0 4px 20px 0 rgba(0,0,0,0.1)',
-  background: 'linear-gradient(145deg, #f3f4f6, #ffffff)',
-}));
-
-const HebrewCalendarComponent = ({ events, onEventClick, onDateClick, view }) => {
-  const calendarRef = useRef(null);
+const HebrewCalendar = ({ events, onEventClick, onDateClick }) => {
+  const [currentDate, setCurrentDate] = useState(new HDate());
+  const [calendarDays, setCalendarDays] = useState([]);
 
   useEffect(() => {
-    console.log('View changed in Hebrew Calendar:', view);
-    if (calendarRef.current) {
-      const calendarApi = calendarRef.current.getApi();
-      setTimeout(() => {
-        calendarApi.changeView(view);
-      }, 0);
-    }
-  }, [view]);
+    const days = HebCal.calendar({
+      year: currentDate.getFullYear(),
+      month: currentDate.getMonth(),
+      isHebrewYear: true,
+    });
+    setCalendarDays(days);
+  }, [currentDate]);
 
-  const renderGregorianDate = useCallback((date) => {
-    if (!(date instanceof Date) || isNaN(date.getTime())) {
-      console.error('Invalid date:', date);
-      return '';
-    }
-    return date.toLocaleDateString('he-IL');
-  }, []);
+  const handlePrevMonth = () => {
+    setCurrentDate(prev => new HDate(prev).prev());
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(prev => new HDate(prev).next());
+  };
 
   return (
-    <CalendarWrapper>
-      <FullCalendar
-        ref={calendarRef}
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-        initialView="dayGridMonth"
-        events={events}
-        eventClick={onEventClick}
-        dateClick={onDateClick}
-        headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-        }}
-        buttonText={{
-          today: 'היום',
-          month: 'חודש',
-          week: 'שבוע',
-          day: 'יום',
-          list: 'רשימה'
-        }}
-        height="auto"
-        dayCellContent={({ date, dayNumberText }) => {
-          const hDate = new HDate(date);
-          return (
-            <div>
-              <Typography variant="body2">{gematriya(hDate.getDate())}</Typography>
-              <Typography variant="caption" color="textSecondary">
-                {renderGregorianDate(date)}
-              </Typography>
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <IconButton onClick={handlePrevMonth}><ChevronRight /></IconButton>
+        <Typography variant="h5">{months[currentDate.getMonth()]}</Typography>
+        <IconButton onClick={handleNextMonth}><ChevronLeft /></IconButton>
+      </div>
+      <Grid container spacing={1}>
+        {calendarDays.map((day, index) => (
+          <Grid item xs={12 / 7} key={index}>
+            <div 
+              style={{ 
+                border: '1px solid #ddd', 
+                padding: '0.5rem', 
+                height: '100px', 
+                overflow: 'auto',
+                cursor: 'pointer'
+              }}
+              onClick={() => onDateClick(day)}
+            >
+              <Typography>{day.getDate()}</Typography>
+              {events
+                .filter(event => new HDate(event.start).isSameDate(day))
+                .map((event, eventIndex) => (
+                  <div 
+                    key={eventIndex} 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEventClick(event);
+                    }}
+                    style={{ 
+                      backgroundColor: '#e0e0e0', 
+                      margin: '2px 0', 
+                      padding: '2px',
+                      borderRadius: '2px'
+                    }}
+                  >
+                    {event.title}
+                  </div>
+                ))
+              }
             </div>
-          );
-        }}
-      />
-    </CalendarWrapper>
+          </Grid>
+        ))}
+      </Grid>
+    </div>
   );
-}
+};
 
-export default React.memo(HebrewCalendarComponent);
+export default HebrewCalendar;

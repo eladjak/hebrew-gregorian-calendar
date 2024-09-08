@@ -15,16 +15,14 @@ const CalendarWrapper = styled(Paper)(({ theme }) => ({
   background: 'linear-gradient(145deg, #f3f4f6, #ffffff)',
 }));
 
-const GregorianCalendar = ({ events, onEventClick, onDateClick, view }) => {
+const GregorianCalendar = ({ events, onEventClick, onDateClick, view, onViewChange }) => {
   const calendarRef = useRef(null);
 
   useEffect(() => {
     console.log('View changed to:', view);
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
-      setTimeout(() => {
-        calendarApi.changeView(view);
-      }, 0);
+      calendarApi.changeView(view);
     }
   }, [view]);
 
@@ -62,6 +60,9 @@ const GregorianCalendar = ({ events, onEventClick, onDateClick, view }) => {
             </Typography>
           </div>
         )}
+        datesSet={(dateInfo) => {
+          onViewChange(dateInfo.view.type);
+        }}
       />
     </CalendarWrapper>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import './App.css';
 import CalendarContainer from './components/CalendarContainer';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -63,10 +63,15 @@ function App() {
     },
   }), [direction]);
 
-  const handleLanguageChange = (newLang) => {
+  const handleLanguageChange = useCallback(() => {
+    const newLang = i18n.language === 'he' ? 'en' : 'he';
     i18n.changeLanguage(newLang);
     setDirection(newLang === 'he' ? 'rtl' : 'ltr');
-  };
+  }, [i18n]);
+
+  useEffect(() => {
+    setDirection(i18n.language === 'he' ? 'rtl' : 'ltr');
+  }, [i18n.language]);
 
   return (
     <ThemeProvider theme={theme}>
