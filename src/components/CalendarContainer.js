@@ -10,95 +10,114 @@ import { useEvents } from '../hooks/useEvents';
 import PropTypes from 'prop-types';
 
 const CalendarContainer = ({ onLanguageChange }) => {
-  const [isHebrew, setIsHebrew] = useState(false);
+  const { t, i18n } = useTranslation();
+  const [isHebrew, setIsHebrew] = useState(i18n.language === 'he');
   const [view, setView] = useState('dayGridMonth');
-  const [modalOpen, setModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const { t } = useTranslation();
-  const { events, isLoading, fetchEvents, addEvent, updateEvent, deleteEvent } = useEvents((message, type) => {
-    // Implement your own notification system here
-    console.warn(message, type);
-  }, t);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { events, isLoading, fetchEvents, addEvent, updateEvent, deleteEvent } = useEvents(
+    (message, type) => {
+      // הודעת התראה כאן
+      console.log(message, type);
+    },
+    t
+  );
 
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
 
-  const handleEventClick = useCallback((clickInfo) => {
-    setSelectedEvent(clickInfo.event.toPlainObject());
-    setModalOpen(true);
-  }, []);
-
-  const handleDateClick = useCallback((dateClickInfo) => {
-    setSelectedEvent({ start: dateClickInfo.date });
-    setModalOpen(true);
-  }, []);
+  const handleLanguageChange = useCallback(() => {
+    const newLang = i18n.language === 'he' ? 'en' : 'he';
+    i18n.changeLanguage(newLang);
+    setIsHebrew(newLang === 'he');
+    onLanguageChange();
+  }, [i18n, onLanguageChange]);
 
   const handleViewChange = useCallback((newView) => {
     setView(newView);
   }, []);
 
-  const handleCalendarTypeChange = useCallback(() => {
-    setIsHebrew(prev => !prev);
+  const handleEventClick = useCallback((eventInfo) => {
+    setSelectedEvent(eventInfo.event);
+    setIsModalOpen(true);
   }, []);
 
-  const handleAddEvent = useCallback(() => {
+  const handleDateClick = useCallback((arg) => {
+    const newEvent = {
+      start: arg.date,
+      end: new Date(arg.date.getTime() + 60 * 60 * 1000), // שעה אחת אחרי ההתחלה
+      allDay: arg.allDay
+    };
+    setSelectedEvent(newEvent);
+    setIsModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
     setSelectedEvent(null);
-    setModalOpen(true);
   }, []);
 
-  const handleSaveEvent = useCallback(async (eventData) => {
+  const handleSaveEvent = useCallback((eventData) => {
     if (eventData._id) {
-      await updateEvent(eventData);
+      updateEvent(eventData);
     } else {
-      await addEvent(eventData);
+      addEvent(eventData);
     }
-    setModalOpen(false);
-    fetchEvents();
-  }, [updateEvent, addEvent, fetchEvents]);
+    handleCloseModal();
+  }, [updateEvent, addEvent]);
 
-  const handleDeleteEvent = useCallback(async (eventId) => {
-    await deleteEvent(eventId);
-    fetchEvents();
-  }, [deleteEvent, fetchEvents]);
+  const handleDeleteEvent = useCallback((eventId) => {
+    deleteEvent(eventId);
+    handleCloseModal();
+  }, [deleteEvent]);
 
-  const calendarProps = useMemo(() => ({
-    events,
-    onEventClick: handleEventClick,
-    onDateClick: handleDateClick,
-    view,
-    onViewChange: handleViewChange,
-  }), [events, handleEventClick, handleDateClick, view, handleViewChange]);
+  const calendarComponent = useMemo(() => {
+    return isHebrew ? (
+      <HebrewCalendar
+        events={events}
+        onEventClick={handleEventClick}
+        onDateClick={handleDateClick}
+        view={view}
+        onViewChange={handleViewChange}
+      />
+    ) : (
+      <GregorianCalendar
+        events={events}
+        onEventClick={handleEventClick}
+        onDateClick={handleDateClick}
+        view={view}
+        onViewChange={handleViewChange}
+      />
+    );
+  }, [isHebrew, events, handleEventClick, handleDateClick, view, handleViewChange]);
 
   return (
     <StyledCalendarWrapper>
       <CalendarToolbar
-        onLanguageChange={onLanguageChange}
-        onRefresh={fetchEvents}
         isHebrew={isHebrew}
-        onCalendarTypeChange={handleCalendarTypeChange}
-        onAddEvent={handleAddEvent}
-        view={view}
-        onViewChange={handleViewChange}
+        onLanguageChange={handleLanguageChange}
+        onAddEvent={() => setIsModalOpen(true)}
       />
-      {isLoading ? (
-        <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
-          <CircularProgress />
-        </Box>
-      ) : (
-        <Fade in={!isLoading} timeout={300}>
-          <Box>
-            {isHebrew ? (
-              <HebrewCalendar {...calendarProps} />
-            ) : (
-              <GregorianCalendar {...calendarProps} />
-            )}
-          </Box>
+      <Box position="relative">
+        <Fade in={!isLoading}>
+          {calendarComponent}
         </Fade>
-      )}
+        {isLoading && (
+          <Box
+            position="absolute"
+            top="50%"
+            left="50%"
+            style={{ transform: 'translate(-50%, -50%)' }}
+          >
+            <CircularProgress />
+          </Box>
+        )}
+      </Box>
       <CustomEventModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        open={isModalOpen}
+        onClose={handleCloseModal}
         event={selectedEvent}
         onSave={handleSaveEvent}
         onDelete={handleDeleteEvent}

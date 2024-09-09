@@ -20,7 +20,6 @@ const GregorianCalendar = ({ events, onEventClick, onDateClick, view, onViewChan
   const calendarRef = useRef(null);
 
   useEffect(() => {
-    console.warn('View changed to:', view);
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
       calendarApi.changeView(view);
@@ -29,7 +28,7 @@ const GregorianCalendar = ({ events, onEventClick, onDateClick, view, onViewChan
 
   const renderHebrewDate = useCallback((date) => {
     const hDate = new HDate(date);
-    return `${gematriya(hDate.getDate())} ${hDate.getMonthName('h')}`;
+    return gematriya(hDate.getDate());
   }, []);
 
   GregorianCalendar.propTypes = {
