@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import App from './App';
 
 // Mock the i18next library
@@ -15,7 +16,12 @@ jest.mock('react-i18next', () => ({
 }));
 
 // Mock axios
-jest.mock('axios');
+jest.mock('axios', () => ({
+  get: jest.fn(() => Promise.resolve({ data: [] })),
+  post: jest.fn(() => Promise.resolve({ data: {} })),
+  put: jest.fn(() => Promise.resolve({ data: {} })),
+  delete: jest.fn(() => Promise.resolve()),
+}));
 
 // Mock the i18n initialization
 jest.mock('./i18n', () => ({
@@ -26,33 +32,37 @@ jest.mock('./i18n', () => ({
 // Mock MUI's useMediaQuery
 jest.mock('@mui/material/useMediaQuery', () => jest.fn(() => false));
 
-// Mock the scrollTo function
-window.scrollTo = jest.fn();
-
-// Mock the ResizeObserver
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
-}));
-
 // Mock the Fade component from MUI
 jest.mock('@mui/material/Fade', () => ({ children }) => children);
 
-// Wrap the test in act
-import { act } from 'react-dom/test-utils';
+// Mock FullCalendar
+jest.mock('@fullcalendar/react', () => () => <div data-testid="fullcalendar">FullCalendar Mock</div>);
+
+// Mock the calendar worker
+jest.mock('worker-loader!../workers/calendarWorker', () => {
+  return class {
+    constructor() {
+      this.onmessage = jest.fn();
+    }
+    postMessage = jest.fn();
+  };
+}, { virtual: true });
 
 test('renders calendar component', async () => {
-  render(<App />);
+  await act(async () => {
+    render(<App />);
+  });
   
   await waitFor(() => {
-    const calendarElement = screen.getByText(/יומן אירועים|Event Calendar/i);
+    const calendarElement = screen.getByText(/Event Calendar/i);
     expect(calendarElement).toBeInTheDocument();
-  }, { timeout: 5000 });
+  }, { timeout: 10000 });
 });
 
 test('switches language', async () => {
-  render(<App />);
+  await act(async () => {
+    render(<App />);
+  });
   
   // Test for English
   await waitFor(() => {

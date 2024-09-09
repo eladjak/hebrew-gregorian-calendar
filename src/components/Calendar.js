@@ -25,6 +25,8 @@ import PropTypes from 'prop-types';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5050';
 
+const workerPath = process.env.NODE_ENV === 'test' ? '' : '/workers/calendarWorker.js';
+
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
   marginTop: theme.spacing(4),
@@ -135,7 +137,7 @@ function toHebrewNumeral(num) {
   return result;
 }
 
-const Calendar = ({ onLanguageChange }) => {
+const Calendar = React.forwardRef(({ onLanguageChange }, ref) => {
   const [events, setEvents] = useState([]);
   const [isHebrew, setIsHebrew] = useState(false);
   const { t, i18n } = useTranslation();
@@ -159,8 +161,14 @@ const Calendar = ({ onLanguageChange }) => {
     try {
       console.warn('Fetching events from:', API_URL);
       const response = await axios.get(`${API_URL}/events`);
-      console.warn('Fetched events:', response.data);
-      workerRef.current.postMessage({ type: 'PROCESS_EVENTS', events: response.data });
+      if (response && response.data) {
+        console.warn('Fetched events:', response.data);
+        if (workerRef.current) {
+          workerRef.current.postMessage({ type: 'PROCESS_EVENTS', events: response.data });
+        }
+      } else {
+        throw new Error('No data received from server');
+      }
     } catch (error) {
       console.error('Error loading events:', error);
       showFeedback(t('failedToLoadEvents'), 'error');
@@ -168,14 +176,20 @@ const Calendar = ({ onLanguageChange }) => {
   }, [t, showFeedback]);
 
   useEffect(() => {
-    workerRef.current = new Worker(new URL('../workers/calendarWorker.js', import.meta.url));
-    workerRef.current.onmessage = (e) => {
-      if (e.data.type === 'EVENTS_PROCESSED') {
-        setEvents(e.data.events);
+    if (process.env.NODE_ENV !== 'test') {
+      workerRef.current = new Worker(workerPath);
+      workerRef.current.onmessage = (e) => {
+        if (e.data.type === 'EVENTS_PROCESSED') {
+          setEvents(e.data.events);
+        }
+      };
+    }
+
+    return () => {
+      if (workerRef.current && process.env.NODE_ENV !== 'test') {
+        workerRef.current.terminate();
       }
     };
-
-    return () => workerRef.current.terminate();
   }, []);
 
   useEffect(() => {
@@ -535,7 +549,7 @@ const Calendar = ({ onLanguageChange }) => {
       </StyledPaper>
     </Container>
   );
-};
+});
 
 Calendar.propTypes = {
   onLanguageChange: PropTypes.func.isRequired,

@@ -66,3 +66,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### הפעלת בדיקות
 
 כדי להפעיל את הבדיקות, השתמש בפקודה הבאה:
+
+
+## תרומה
+
+תרומות מתקבלות בברכה! אנא הרגישו חופשי להגיש Pull Request.
+
+## רישיון
+
+פרויקט זה מורשה תחת רישיון MIT - ראה את הקובץ [LICENSE](LICENSE) לפרטים.
+
+## תודות
+
+- [FullCalendar](https://fullcalendar.io/) עבור רכיב לוח השנה
+- [Hebcal](https://www.hebcal.com/) עבור חישובי תאריכים עבריים
+- [Material-UI](https://material-ui.com/) עבור רכיבי ממשק המשתמש
