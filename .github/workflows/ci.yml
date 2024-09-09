@@ -15,3 +15,8 @@ jobs:
         run: npm run lint
       - name: Run tests
         run: npm test -- --watchAll=false --ci --coverage --maxWorkers=2
+      - name: Debug output
+        if: failure()
+        run: |
+          echo "Test output:"
+          cat /home/runner/work/calendar-appointment-app/calendar-appointment-app/npm-debug.log || true

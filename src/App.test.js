@@ -54,7 +54,7 @@ test('renders calendar component', async () => {
   });
   
   await waitFor(() => {
-    const calendarElement = screen.getByText(/Event Calendar/i);
+    const calendarElement = screen.getByTestId("fullcalendar");
     expect(calendarElement).toBeInTheDocument();
   }, { timeout: 10000 });
 });

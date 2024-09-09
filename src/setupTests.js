@@ -25,3 +25,6 @@ global.URL.revokeObjectURL = jest.fn();
 // מוק ל-console.warn ו-console.error
 console.warn = jest.fn();
 console.error = jest.fn();
+
+// הגדרת משתני סביבה לטסטים
+process.env.REACT_APP_API_URL = 'http://localhost:5050';
