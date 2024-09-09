@@ -16,8 +16,46 @@ jobs:
     - run: npm ci
     - run: npm run build
     - run: npm test
-    # כאן תוסיף צעדים לפריסת האפליקציה שלך
-    # לדוגמה, העלאה ל-AWS S3, Netlify, Heroku וכו'
+    # הגדרת הסוכן עם המידע החדש
+    - name: Configure GitHub App
+      env:
+        APP_ID: ${{ secrets.APP_ID }}
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      run: |
+        echo "APP_ID=$APP_ID" >> $GITHUB_ENV
+        echo "$PRIVATE_KEY" > private-key.pem
+    # הפעלת הסוכן
+    - name: Run Code Agent
+      run: |
+        npm install @octokit/auth-app @octokit/rest
+        node -e "
+        const { createAppAuth } = require('@octokit/auth-app');
+        const { Octokit } = require('@octokit/rest');
+
+        async function runAgent() {
+          const appOctokit = new Octokit({
+            authStrategy: createAppAuth,
+            auth: {
+              appId: process.env.APP_ID,
+              privateKey: require('fs').readFileSync('private-key.pem', 'utf8'),
+              installationId: process.env.GITHUB_REPOSITORY.split('/')[0],
+            },
+          });
+
+          // כאן תוכל להוסיף את הלוגיקה של הסוכן
+          console.log('הסוכן פועל!');
+
+          // לדוגמה, נוכל לקבל מידע על הרפוזיטורי
+          const { data: repo } = await appOctokit.repos.get({
+            owner: process.env.GITHUB_REPOSITORY.split('/')[0],
+            repo: process.env.GITHUB_REPOSITORY.split('/')[1],
+          });
+          console.log('מידע על הרפוזיטורי:', repo);
+        }
+
+        runAgent();
+        "
+    # המשך הפריסה כרגיל
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
