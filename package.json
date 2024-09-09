@@ -36,7 +36,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom --testTimeout=30000 --detectOpenHandles",
-    "lint": "eslint src"
+    "lint": "eslint src --max-warnings 0"
   },
   "eslintConfig": {
     "extends": [

@@ -30,5 +30,13 @@ module.exports = {
         args: 'after-used'
       }],
       'no-console': ['warn', { allow: ['warn', 'error'] }]
-    }
+    },
+    overrides: [
+      {
+        files: ['**/*.test.js', '**/*.spec.js'],
+        env: {
+          jest: true
+        }
+      }
+    ]
   };
