@@ -95,6 +95,7 @@ const CalendarContainer = ({ onLanguageChange }) => {
 
   return (
     <StyledCalendarWrapper>
+      <h1>{t('eventCalendar')}</h1> {/* הוסף כותרת */}
       <CalendarToolbar
         isHebrew={isHebrew}
         onLanguageChange={handleLanguageChange}

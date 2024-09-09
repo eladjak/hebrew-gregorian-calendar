@@ -1,6 +1,6 @@
 # Hebrew-Gregorian Calendar
 
-This project is a React-based calendar application that supports both Hebrew and Gregorian calendars. It allows users to switch between the two calendar systems and manage events.
+יישום לוח שנה המשלב לוח שנה עברי וגרגוריאני, מבוסס על React.
 
 ## Features
 

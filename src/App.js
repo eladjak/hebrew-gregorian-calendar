@@ -3,12 +3,13 @@ import './App.css';
 import CalendarContainer from './components/CalendarContainer';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
-import './i18n';
+import initI18n from './i18n';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
 
 library.add(fas);
+initI18n();
 
 function App() {
   const { i18n } = useTranslation();

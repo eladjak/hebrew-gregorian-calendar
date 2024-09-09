@@ -17,7 +17,9 @@
     "@hebcal/core": "^5.4.11",
     "@mui/icons-material": "^6.0.2",
     "@mui/material": "^6.0.2",
-    "@testing-library/user-event": "^13.5.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.4.3",
     "axios": "^1.7.7",
     "i18next": "^23.14.0",
     "prop-types": "^15.8.1",
@@ -33,7 +35,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@mui)/\"",
+    "test": "react-scripts test --env=jsdom --testTimeout=30000",
     "lint": "eslint src"
   },
   "eslintConfig": {
@@ -64,5 +66,13 @@
     "eslint-plugin-react": "^7.35.2",
     "jest": "^27.5.1",
     "prettier": "^3.3.3"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@mui|@babel)/)"
+    ],
+    "moduleNameMapper": {
+      "^@mui/(.*)$": "<rootDir>/node_modules/@mui/$1"
+    }
   }
 }
