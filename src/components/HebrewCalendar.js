@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Grid, Typography, IconButton, Paper } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { HDate, HebrewCalendar as HebCal, months } from '@hebcal/core';
@@ -36,7 +36,7 @@ const EventChip = styled('div')(({ theme }) => ({
   },
 }));
 
-const HebrewCalendar = ({ events, onEventClick, onDateClick, view, onViewChange }) => {
+const HebrewCalendar = ({ events, onEventClick, onDateClick, _view, _onViewChange }) => {
   const [currentDate, setCurrentDate] = useState(new HDate());
   const [calendarDays, setCalendarDays] = useState([]);
 
@@ -49,13 +49,13 @@ const HebrewCalendar = ({ events, onEventClick, onDateClick, view, onViewChange 
     setCalendarDays(days);
   }, [currentDate]);
 
-  const handlePrevMonth = useCallback(() => {
+  const handlePrevMonth = () => {
     setCurrentDate(prev => new HDate(prev).prev());
-  }, []);
+  };
 
-  const handleNextMonth = useCallback(() => {
+  const handleNextMonth = () => {
     setCurrentDate(prev => new HDate(prev).next());
-  }, []);
+  };
 
   const renderDayCell = useCallback((day) => (
     <Grid item xs={12 / 7} key={day.getDate()}>
@@ -97,8 +97,8 @@ HebrewCalendar.propTypes = {
   events: PropTypes.array.isRequired,
   onEventClick: PropTypes.func.isRequired,
   onDateClick: PropTypes.func.isRequired,
-  view: PropTypes.string.isRequired,
-  onViewChange: PropTypes.func.isRequired
+  _view: PropTypes.string.isRequired,
+  _onViewChange: PropTypes.func.isRequired
 };
 
 export default React.memo(HebrewCalendar);

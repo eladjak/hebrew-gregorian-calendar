@@ -43,7 +43,7 @@ export const CalendarControls = styled(Box)(({ theme }) => ({
   },
 }));
 
-export const AnimatedIconButton = styled(IconButton)(({ theme }) => ({
+export const AnimatedIconButton = styled(IconButton)(() => ({
   transition: 'transform 0.3s',
   '&:hover': {
     transform: 'scale(1.1) rotate(15deg)',

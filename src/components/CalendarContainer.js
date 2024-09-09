@@ -19,7 +19,7 @@ const CalendarContainer = ({ onLanguageChange }) => {
   const { events, isLoading, fetchEvents, addEvent, updateEvent, deleteEvent } = useEvents(
     (message, type) => {
       // הודעת התראה כאן
-      console.log(message, type);
+      console.warn(message, type);
     },
     t
   );
