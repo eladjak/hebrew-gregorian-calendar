@@ -137,7 +137,7 @@ function toHebrewNumeral(num) {
   return result;
 }
 
-const Calendar = React.forwardRef(({ onLanguageChange }, ref) => {
+const Calendar = React.forwardRef(function Calendar({ onLanguageChange }, ref) {
   const [events, setEvents] = useState([]);
   const [isHebrew, setIsHebrew] = useState(false);
   const { t, i18n } = useTranslation();

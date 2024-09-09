@@ -1,6 +1,6 @@
 module.exports = {
     extends: ['eslint:recommended', 'plugin:react/recommended', 'prettier'],
-    plugins: ['react'],
+    plugins: ['react', 'react-hooks'],
     parserOptions: {
       ecmaVersion: 2021,
       sourceType: 'module',
@@ -29,7 +29,9 @@ module.exports = {
         caughtErrors: 'none',
         args: 'after-used'
       }],
-      'no-console': ['warn', { allow: ['warn', 'error'] }]
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn'
     },
     overrides: [
       {
