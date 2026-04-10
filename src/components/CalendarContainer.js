@@ -11,16 +11,17 @@ import PropTypes from 'prop-types';
 
 const CalendarContainer = ({ onLanguageChange }) => {
   const { t, i18n } = useTranslation();
-  const [isHebrew, setIsHebrew] = useState(i18n.language === 'he');
+  const [isHebrew, setIsHebrew] = useState(false);
   const [view, setView] = useState('dayGridMonth');
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const showMessage = useCallback((message, type) => {
+    console.warn(message, type);
+  }, []);
+
   const { events, isLoading, fetchEvents, addEvent, updateEvent, deleteEvent } = useEvents(
-    (message, type) => {
-      // הודעת התראה כאן
-      console.warn(message, type);
-    },
+    showMessage,
     t
   );
 
@@ -66,12 +67,12 @@ const CalendarContainer = ({ onLanguageChange }) => {
       addEvent(eventData);
     }
     handleCloseModal();
-  }, [updateEvent, addEvent]);
+  }, [updateEvent, addEvent, handleCloseModal]);
 
   const handleDeleteEvent = useCallback((eventId) => {
     deleteEvent(eventId);
     handleCloseModal();
-  }, [deleteEvent]);
+  }, [deleteEvent, handleCloseModal]);
 
   const calendarComponent = useMemo(() => {
     return isHebrew ? (
@@ -103,7 +104,7 @@ const CalendarContainer = ({ onLanguageChange }) => {
       />
       <Box position="relative">
         <Fade in={!isLoading}>
-          {calendarComponent}
+          <div>{calendarComponent}</div>
         </Fade>
         {isLoading && (
           <Box

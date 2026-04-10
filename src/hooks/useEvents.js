@@ -64,7 +64,8 @@ export const useEvents = (showMessage, t) => {
     } finally {
       setIsLoading(false);
     }
-  }, [showMessage, t]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const addEvent = useCallback(async (newEvent) => {
     console.warn('Adding event:', newEvent);
