@@ -58,8 +58,8 @@ export const useEvents = (showMessage, t) => {
       console.warn('Fetched events:', response.data);
       setEvents(response.data);
     } catch (error) {
-      console.error('Error fetching events:', error);
-      console.log('Loading demo events as fallback');
+      console.error('Error fetching events:', error); // eslint-disable-line no-console
+      console.warn('Loading demo events as fallback'); // eslint-disable-line no-console
       setEvents(DEMO_EVENTS);
     } finally {
       setIsLoading(false);
