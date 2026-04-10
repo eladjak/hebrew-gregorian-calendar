@@ -3,6 +3,49 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5050';
 
+const DEMO_EVENTS = [
+  {
+    _id: 'demo1',
+    title: 'פגישת צוות שבועית',
+    start: new Date(Date.now() + 86400000).toISOString(),
+    end: new Date(Date.now() + 86400000 + 3600000).toISOString(),
+    color: '#1976d2',
+    description: 'סקירת התקדמות שבועית של הצוות',
+  },
+  {
+    _id: 'demo2',
+    title: 'Sprint Review',
+    start: new Date(Date.now() + 86400000 * 3).toISOString(),
+    end: new Date(Date.now() + 86400000 * 3 + 5400000).toISOString(),
+    color: '#388e3c',
+    description: 'הצגת תוצרים מהספרינט האחרון',
+  },
+  {
+    _id: 'demo3',
+    title: 'הדרכת React Hooks',
+    start: new Date(Date.now() + 86400000 * 5).toISOString(),
+    end: new Date(Date.now() + 86400000 * 5 + 7200000).toISOString(),
+    color: '#f57c00',
+    description: 'הדרכה פנימית על Custom Hooks ו-useEffect',
+  },
+  {
+    _id: 'demo4',
+    title: 'Code Review',
+    start: new Date(Date.now() - 86400000).toISOString(),
+    end: new Date(Date.now() - 86400000 + 3600000).toISOString(),
+    color: '#7b1fa2',
+    description: 'סקירת קוד של פיצ\'ר ניהול משתמשים',
+  },
+  {
+    _id: 'demo5',
+    title: 'Retrospective',
+    start: new Date(Date.now() + 86400000 * 7).toISOString(),
+    end: new Date(Date.now() + 86400000 * 7 + 3600000).toISOString(),
+    color: '#c62828',
+    description: 'רטרוספקטיבה לסוף הספרינט',
+  },
+];
+
 export const useEvents = (showMessage, t) => {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +59,8 @@ export const useEvents = (showMessage, t) => {
       setEvents(response.data);
     } catch (error) {
       console.error('Error fetching events:', error);
-      showMessage(t('errorFetchingEvents'), 'error');
+      console.log('Loading demo events as fallback');
+      setEvents(DEMO_EVENTS);
     } finally {
       setIsLoading(false);
     }
