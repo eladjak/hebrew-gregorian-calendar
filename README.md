@@ -81,3 +81,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [FullCalendar](https://fullcalendar.io/) עבור רכיב לוח השנה
 - [Hebcal](https://www.hebcal.com/) עבור חישובי תאריכים עבריים
 - [Material-UI](https://material-ui.com/) עבור רכיבי ממשק המשתמש
+---
+
+⭐ If you find this useful, please star the repo!
+
+*[README בעברית](README.he.md)*
